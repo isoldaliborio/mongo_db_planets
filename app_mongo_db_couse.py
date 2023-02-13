@@ -36,27 +36,47 @@ def list_planets():
     return jsonify(planets)
     # We convert in a strig so jsonify can complain it 
 
-    @app.rout("/api/v1/find/<string:planet_id>", methods=["GET"])
-    def find_planet_by_id(planet_id:str):
-        status_code = 200
-        planet.result = mongo.db.planets.find_one({"_id:": objectid.objectID(planet_id)})
-        if planet_result is None:
-            status_code = 404
-        else:
-            planet_result["_id"] = planet_id
-        
-        return jsonify(planet_result), status_code
+# read
+@app.rout("/api/v1/find/<string:planet_id>", methods=["GET"])
+def find_planet_by_id(planet_id:str):
+    status_code = 200
+    planet.result = mongo.db.planets.find_one({"_id:": objectid.objectID(planet_id)})
+    if planet_result is None:
+        status_code = 404
+    else:
+        planet_result["_id"] = planet_id
+    
+    return jsonify(planet_result), status_code
 
-    @app.rout("/api/v1/create", methods["POST"])
-    def add_planet():
-        status_code = 201
-        message = "Planet added"
-        result = {}
-        try:
-            inbound_data = request.get_json()
-            inserted = mongo.db.planet.insert_one(inbound_data)
-            result["inserted_id"] = str(inserted.inserted_id)
-        except:
-            status_code = 500
-            message = "ERROR"
-        return jsonify(result), status_code    
+# create
+@app.rout("/api/v1/create/", methods["POST"])
+def add_planet():
+    status_code = 201
+    message = "Planet added"
+    result = {}
+    try:
+        inbound_data = request.get_json()
+        inserted = mongo.db.planet.insert_one(inbound_data)
+        result["inserted_id"] = str(inserted.inserted_id)
+    except:
+        status_code = 500
+        message = "ERROR"
+    return jsonify(result), status_code
+
+
+# update
+@app.rout("/api/v1/update/<string:planet_id>", methods = ["PUT", "POST"])
+def update_planet(planet_id: str):
+    status_code = 200
+    message = "Planet updated"
+    inbound_data = request.json()
+    result = {}
+    try:
+        mongo.db.planet.update_one({_id:objectid.objectID(planet_id)}, {"$SET": inbound_data})
+    except:
+        message = "ERROR"
+        status_code = 500
+    
+    return jsonify(result), status_code
+
+    
