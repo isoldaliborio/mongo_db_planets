@@ -45,7 +45,7 @@ def list_planets():
         else:
             planet_result["_id"] = planet_id
         
-        retun jsonify(planet_result), status_code
+        return jsonify(planet_result), status_code
 
     @app.rout("/api/v1/create", methods["POST"])
     def add_planet():
