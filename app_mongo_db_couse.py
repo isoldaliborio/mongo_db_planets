@@ -79,4 +79,18 @@ def update_planet(planet_id: str):
     
     return jsonify(result), status_code
 
-    
+# delete route
+
+@pp.route("api/v1/delete/<string:planet_id>", methods = ["DELETE", "POST"])
+def delete_planet(planet_id: str):
+    status_code = 200
+    result = {}
+    message = "I fear something terrible has happened"
+    try:
+        mongo.db.planets.delete_one({"_id": objectid.objectID(planet_id)})
+    except:
+        message = "ERROR"
+        status_code = 500
+
+    result["message"] = message
+    return jsonify(resul), status_code
